@@ -1,2 +1,2 @@
 # Dlp-2016-2017
-Proyecto de la asignatura desrrollo de lenguajes de programacion
+Proyecto de la asignatura desarrollo de lenguajes de programación
