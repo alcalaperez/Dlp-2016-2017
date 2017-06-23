@@ -1,0 +1,2219 @@
+   0  $accept : programa $end
+
+   1  programa : definiciones
+
+   2  definiciones :
+   3               | definiciones definicion
+
+   4  definicion : estructura
+   5             | metodo
+   6             | defVariableGlobal
+
+   7  estructura : "STRUCT" "IDENT" '{' campos '}' ';'
+
+   8  campos :
+   9         | campos campo
+
+  10  campo : "IDENT" ':' tipo ';'
+
+  11  defVariableGlobal : "VAR" "IDENT" ':' tipo ';'
+
+  12  metodo : "IDENT" '(' parametros ')' ':' tipo '{' cuerpoMetodo '}'
+  13         | "IDENT" '(' parametros ')' '{' cuerpoMetodo '}'
+
+  14  parametros :
+  15             | parametroP
+
+  16  parametrosLlamada :
+  17                    | parametroLlamadaP
+
+  18  parametroP : parametro
+  19             | parametroP ',' parametro
+
+  20  parametroLlamadaP : parametroLlamada
+  21                    | parametroLlamadaP ',' parametroLlamada
+
+  22  parametro : "IDENT" ':' tipo
+
+  23  parametroLlamada : expr
+
+  24  cuerpoMetodo :
+  25               | cuerpoMetodo cuerpo
+
+  26  cuerpo : "VAR" "IDENT" ':' tipo ';'
+  27         | "WHILE" '(' expr ')' '{' cuerpoMetodo '}'
+  28         | "IF" '(' expr ')' '{' cuerpoMetodo '}'
+  29         | "IF" '(' expr ')' '{' cuerpoMetodo '}' "ELSE" '{' cuerpoMetodo '}'
+  30         | "RETURN" ';'
+  31         | "RETURN" expr ';'
+  32         | expr '=' expr ';'
+  33         | "PRINT" expr ';'
+  34         | "READ" expr ';'
+  35         | "IDENT" '(' parametrosLlamada ')' ';'
+
+  36  tipo : "INT"
+  37       | "CHAR"
+  38       | "FLOAT"
+  39       | "IDENT"
+  40       | '[' "LITENT" ']' tipo
+
+  41  expr : "LITENT"
+  42       | "LITREAL"
+  43       | "IDENT"
+  44       | "CAST" '<' tipo '>' expr
+  45       | "CHARACTER"
+  46       | expr '+' expr
+  47       | expr '-' expr
+  48       | expr '*' expr
+  49       | expr '/' expr
+  50       | '(' expr ')'
+  51       | expr "AND" expr
+  52       | expr "OR" expr
+  53       | expr "EQUALS" expr
+  54       | expr "NOTEQUALS" expr
+  55       | "NOT" expr
+  56       | expr '<' expr
+  57       | expr '>' expr
+  58       | expr '.' "IDENT"
+  59       | expr '[' expr ']'
+  60       | expr "MAYORIGUAL" expr
+  61       | expr "MENORIGUAL" expr
+  62       | "IDENT" '(' parametrosLlamada ')'
+
+state 0
+	$accept : . programa $end  (0)
+	definiciones : .  (2)
+
+	.  reduce 2
+
+	programa  goto 1
+	definiciones  goto 2
+
+
+state 1
+	$accept : programa . $end  (0)
+
+	$end  accept
+
+
+state 2
+	programa : definiciones .  (1)
+	definiciones : definiciones . definicion  (3)
+
+	"IDENT"  shift 3
+	"STRUCT"  shift 4
+	"VAR"  shift 5
+	$end  reduce 1
+
+	definicion  goto 6
+	estructura  goto 7
+	metodo  goto 8
+	defVariableGlobal  goto 9
+
+
+state 3
+	metodo : "IDENT" . '(' parametros ')' ':' tipo '{' cuerpoMetodo '}'  (12)
+	metodo : "IDENT" . '(' parametros ')' '{' cuerpoMetodo '}'  (13)
+
+	'('  shift 10
+	.  error
+
+
+state 4
+	estructura : "STRUCT" . "IDENT" '{' campos '}' ';'  (7)
+
+	"IDENT"  shift 11
+	.  error
+
+
+state 5
+	defVariableGlobal : "VAR" . "IDENT" ':' tipo ';'  (11)
+
+	"IDENT"  shift 12
+	.  error
+
+
+state 6
+	definiciones : definiciones definicion .  (3)
+
+	.  reduce 3
+
+
+state 7
+	definicion : estructura .  (4)
+
+	.  reduce 4
+
+
+state 8
+	definicion : metodo .  (5)
+
+	.  reduce 5
+
+
+state 9
+	definicion : defVariableGlobal .  (6)
+
+	.  reduce 6
+
+
+state 10
+	metodo : "IDENT" '(' . parametros ')' ':' tipo '{' cuerpoMetodo '}'  (12)
+	metodo : "IDENT" '(' . parametros ')' '{' cuerpoMetodo '}'  (13)
+	parametros : .  (14)
+
+	"IDENT"  shift 13
+	')'  reduce 14
+
+	parametros  goto 14
+	parametroP  goto 15
+	parametro  goto 16
+
+
+state 11
+	estructura : "STRUCT" "IDENT" . '{' campos '}' ';'  (7)
+
+	'{'  shift 17
+	.  error
+
+
+state 12
+	defVariableGlobal : "VAR" "IDENT" . ':' tipo ';'  (11)
+
+	':'  shift 18
+	.  error
+
+
+state 13
+	parametro : "IDENT" . ':' tipo  (22)
+
+	':'  shift 19
+	.  error
+
+
+state 14
+	metodo : "IDENT" '(' parametros . ')' ':' tipo '{' cuerpoMetodo '}'  (12)
+	metodo : "IDENT" '(' parametros . ')' '{' cuerpoMetodo '}'  (13)
+
+	')'  shift 20
+	.  error
+
+
+state 15
+	parametros : parametroP .  (15)
+	parametroP : parametroP . ',' parametro  (19)
+
+	','  shift 21
+	')'  reduce 15
+
+
+state 16
+	parametroP : parametro .  (18)
+
+	.  reduce 18
+
+
+state 17
+	estructura : "STRUCT" "IDENT" '{' . campos '}' ';'  (7)
+	campos : .  (8)
+
+	.  reduce 8
+
+	campos  goto 22
+
+
+state 18
+	defVariableGlobal : "VAR" "IDENT" ':' . tipo ';'  (11)
+
+	"IDENT"  shift 23
+	'['  shift 24
+	"INT"  shift 25
+	"CHAR"  shift 26
+	"FLOAT"  shift 27
+	.  error
+
+	tipo  goto 28
+
+
+state 19
+	parametro : "IDENT" ':' . tipo  (22)
+
+	"IDENT"  shift 23
+	'['  shift 24
+	"INT"  shift 25
+	"CHAR"  shift 26
+	"FLOAT"  shift 27
+	.  error
+
+	tipo  goto 29
+
+
+state 20
+	metodo : "IDENT" '(' parametros ')' . ':' tipo '{' cuerpoMetodo '}'  (12)
+	metodo : "IDENT" '(' parametros ')' . '{' cuerpoMetodo '}'  (13)
+
+	'{'  shift 30
+	':'  shift 31
+	.  error
+
+
+state 21
+	parametroP : parametroP ',' . parametro  (19)
+
+	"IDENT"  shift 13
+	.  error
+
+	parametro  goto 32
+
+
+state 22
+	estructura : "STRUCT" "IDENT" '{' campos . '}' ';'  (7)
+	campos : campos . campo  (9)
+
+	"IDENT"  shift 33
+	'}'  shift 34
+	.  error
+
+	campo  goto 35
+
+
+state 23
+	tipo : "IDENT" .  (39)
+
+	.  reduce 39
+
+
+state 24
+	tipo : '[' . "LITENT" ']' tipo  (40)
+
+	"LITENT"  shift 36
+	.  error
+
+
+state 25
+	tipo : "INT" .  (36)
+
+	.  reduce 36
+
+
+state 26
+	tipo : "CHAR" .  (37)
+
+	.  reduce 37
+
+
+state 27
+	tipo : "FLOAT" .  (38)
+
+	.  reduce 38
+
+
+state 28
+	defVariableGlobal : "VAR" "IDENT" ':' tipo . ';'  (11)
+
+	';'  shift 37
+	.  error
+
+
+state 29
+	parametro : "IDENT" ':' tipo .  (22)
+
+	.  reduce 22
+
+
+state 30
+	metodo : "IDENT" '(' parametros ')' '{' . cuerpoMetodo '}'  (13)
+	cuerpoMetodo : .  (24)
+
+	.  reduce 24
+
+	cuerpoMetodo  goto 38
+
+
+state 31
+	metodo : "IDENT" '(' parametros ')' ':' . tipo '{' cuerpoMetodo '}'  (12)
+
+	"IDENT"  shift 23
+	'['  shift 24
+	"INT"  shift 25
+	"CHAR"  shift 26
+	"FLOAT"  shift 27
+	.  error
+
+	tipo  goto 39
+
+
+state 32
+	parametroP : parametroP ',' parametro .  (19)
+
+	.  reduce 19
+
+
+state 33
+	campo : "IDENT" . ':' tipo ';'  (10)
+
+	':'  shift 40
+	.  error
+
+
+state 34
+	estructura : "STRUCT" "IDENT" '{' campos '}' . ';'  (7)
+
+	';'  shift 41
+	.  error
+
+
+state 35
+	campos : campos campo .  (9)
+
+	.  reduce 9
+
+
+state 36
+	tipo : '[' "LITENT" . ']' tipo  (40)
+
+	']'  shift 42
+	.  error
+
+
+state 37
+	defVariableGlobal : "VAR" "IDENT" ':' tipo ';' .  (11)
+
+	.  reduce 11
+
+
+state 38
+	metodo : "IDENT" '(' parametros ')' '{' cuerpoMetodo . '}'  (13)
+	cuerpoMetodo : cuerpoMetodo . cuerpo  (25)
+
+	"NOT"  shift 43
+	"IDENT"  shift 44
+	'}'  shift 45
+	"VAR"  shift 46
+	'('  shift 47
+	"WHILE"  shift 48
+	"IF"  shift 49
+	"RETURN"  shift 50
+	"PRINT"  shift 51
+	"READ"  shift 52
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 57
+	cuerpo  goto 58
+
+
+state 39
+	metodo : "IDENT" '(' parametros ')' ':' tipo . '{' cuerpoMetodo '}'  (12)
+
+	'{'  shift 59
+	.  error
+
+
+state 40
+	campo : "IDENT" ':' . tipo ';'  (10)
+
+	"IDENT"  shift 23
+	'['  shift 24
+	"INT"  shift 25
+	"CHAR"  shift 26
+	"FLOAT"  shift 27
+	.  error
+
+	tipo  goto 60
+
+
+state 41
+	estructura : "STRUCT" "IDENT" '{' campos '}' ';' .  (7)
+
+	.  reduce 7
+
+
+state 42
+	tipo : '[' "LITENT" ']' . tipo  (40)
+
+	"IDENT"  shift 23
+	'['  shift 24
+	"INT"  shift 25
+	"CHAR"  shift 26
+	"FLOAT"  shift 27
+	.  error
+
+	tipo  goto 61
+
+
+state 43
+	expr : "NOT" . expr  (55)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 63
+
+
+state 44
+	cuerpo : "IDENT" . '(' parametrosLlamada ')' ';'  (35)
+	expr : "IDENT" .  (43)
+	expr : "IDENT" . '(' parametrosLlamada ')'  (62)
+
+	'('  shift 64
+	'='  reduce 43
+	'+'  reduce 43
+	'-'  reduce 43
+	'*'  reduce 43
+	'/'  reduce 43
+	"AND"  reduce 43
+	"OR"  reduce 43
+	"MAYORIGUAL"  reduce 43
+	"MENORIGUAL"  reduce 43
+	"EQUALS"  reduce 43
+	"NOTEQUALS"  reduce 43
+	'<'  reduce 43
+	'>'  reduce 43
+	'.'  reduce 43
+	'['  reduce 43
+
+
+state 45
+	metodo : "IDENT" '(' parametros ')' '{' cuerpoMetodo '}' .  (13)
+
+	.  reduce 13
+
+
+state 46
+	cuerpo : "VAR" . "IDENT" ':' tipo ';'  (26)
+
+	"IDENT"  shift 65
+	.  error
+
+
+state 47
+	expr : '(' . expr ')'  (50)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 66
+
+
+state 48
+	cuerpo : "WHILE" . '(' expr ')' '{' cuerpoMetodo '}'  (27)
+
+	'('  shift 67
+	.  error
+
+
+state 49
+	cuerpo : "IF" . '(' expr ')' '{' cuerpoMetodo '}'  (28)
+	cuerpo : "IF" . '(' expr ')' '{' cuerpoMetodo '}' "ELSE" '{' cuerpoMetodo '}'  (29)
+
+	'('  shift 68
+	.  error
+
+
+state 50
+	cuerpo : "RETURN" . ';'  (30)
+	cuerpo : "RETURN" . expr ';'  (31)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	';'  shift 69
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 70
+
+
+state 51
+	cuerpo : "PRINT" . expr ';'  (33)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 71
+
+
+state 52
+	cuerpo : "READ" . expr ';'  (34)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 72
+
+
+state 53
+	expr : "LITENT" .  (41)
+
+	.  reduce 41
+
+
+state 54
+	expr : "LITREAL" .  (42)
+
+	.  reduce 42
+
+
+state 55
+	expr : "CAST" . '<' tipo '>' expr  (44)
+
+	'<'  shift 73
+	.  error
+
+
+state 56
+	expr : "CHARACTER" .  (45)
+
+	.  reduce 45
+
+
+state 57
+	cuerpo : expr . '=' expr ';'  (32)
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'='  shift 74
+	'+'  shift 75
+	'-'  shift 76
+	'*'  shift 77
+	'/'  shift 78
+	"AND"  shift 79
+	"OR"  shift 80
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	.  error
+
+
+state 58
+	cuerpoMetodo : cuerpoMetodo cuerpo .  (25)
+
+	.  reduce 25
+
+
+state 59
+	metodo : "IDENT" '(' parametros ')' ':' tipo '{' . cuerpoMetodo '}'  (12)
+	cuerpoMetodo : .  (24)
+
+	.  reduce 24
+
+	cuerpoMetodo  goto 89
+
+
+state 60
+	campo : "IDENT" ':' tipo . ';'  (10)
+
+	';'  shift 90
+	.  error
+
+
+state 61
+	tipo : '[' "LITENT" ']' tipo .  (40)
+
+	.  reduce 40
+
+
+state 62
+	expr : "IDENT" .  (43)
+	expr : "IDENT" . '(' parametrosLlamada ')'  (62)
+
+	'('  shift 91
+	'='  reduce 43
+	'+'  reduce 43
+	'-'  reduce 43
+	'*'  reduce 43
+	'/'  reduce 43
+	"AND"  reduce 43
+	"OR"  reduce 43
+	"MAYORIGUAL"  reduce 43
+	"MENORIGUAL"  reduce 43
+	"EQUALS"  reduce 43
+	"NOTEQUALS"  reduce 43
+	'<'  reduce 43
+	'>'  reduce 43
+	'.'  reduce 43
+	'['  reduce 43
+	']'  reduce 43
+	';'  reduce 43
+	')'  reduce 43
+	','  reduce 43
+
+
+state 63
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : "NOT" expr .  (55)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	'='  reduce 55
+	'+'  reduce 55
+	'-'  reduce 55
+	'*'  reduce 55
+	'/'  reduce 55
+	"AND"  reduce 55
+	"OR"  reduce 55
+	']'  reduce 55
+	';'  reduce 55
+	')'  reduce 55
+	','  reduce 55
+
+
+state 64
+	cuerpo : "IDENT" '(' . parametrosLlamada ')' ';'  (35)
+	expr : "IDENT" '(' . parametrosLlamada ')'  (62)
+	parametrosLlamada : .  (16)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	')'  reduce 16
+
+	parametrosLlamada  goto 92
+	parametroLlamadaP  goto 93
+	parametroLlamada  goto 94
+	expr  goto 95
+
+
+state 65
+	cuerpo : "VAR" "IDENT" . ':' tipo ';'  (26)
+
+	':'  shift 96
+	.  error
+
+
+state 66
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : '(' expr . ')'  (50)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'+'  shift 75
+	'-'  shift 76
+	'*'  shift 77
+	'/'  shift 78
+	"AND"  shift 79
+	"OR"  shift 80
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	')'  shift 97
+	.  error
+
+
+state 67
+	cuerpo : "WHILE" '(' . expr ')' '{' cuerpoMetodo '}'  (27)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 98
+
+
+state 68
+	cuerpo : "IF" '(' . expr ')' '{' cuerpoMetodo '}'  (28)
+	cuerpo : "IF" '(' . expr ')' '{' cuerpoMetodo '}' "ELSE" '{' cuerpoMetodo '}'  (29)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 99
+
+
+state 69
+	cuerpo : "RETURN" ';' .  (30)
+
+	.  reduce 30
+
+
+state 70
+	cuerpo : "RETURN" expr . ';'  (31)
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'+'  shift 75
+	'-'  shift 76
+	'*'  shift 77
+	'/'  shift 78
+	"AND"  shift 79
+	"OR"  shift 80
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	';'  shift 100
+	.  error
+
+
+state 71
+	cuerpo : "PRINT" expr . ';'  (33)
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'+'  shift 75
+	'-'  shift 76
+	'*'  shift 77
+	'/'  shift 78
+	"AND"  shift 79
+	"OR"  shift 80
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	';'  shift 101
+	.  error
+
+
+state 72
+	cuerpo : "READ" expr . ';'  (34)
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'+'  shift 75
+	'-'  shift 76
+	'*'  shift 77
+	'/'  shift 78
+	"AND"  shift 79
+	"OR"  shift 80
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	';'  shift 102
+	.  error
+
+
+state 73
+	expr : "CAST" '<' . tipo '>' expr  (44)
+
+	"IDENT"  shift 23
+	'['  shift 24
+	"INT"  shift 25
+	"CHAR"  shift 26
+	"FLOAT"  shift 27
+	.  error
+
+	tipo  goto 103
+
+
+state 74
+	cuerpo : expr '=' . expr ';'  (32)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 104
+
+
+state 75
+	expr : expr '+' . expr  (46)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 105
+
+
+state 76
+	expr : expr '-' . expr  (47)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 106
+
+
+state 77
+	expr : expr '*' . expr  (48)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 107
+
+
+state 78
+	expr : expr '/' . expr  (49)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 108
+
+
+state 79
+	expr : expr "AND" . expr  (51)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 109
+
+
+state 80
+	expr : expr "OR" . expr  (52)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 110
+
+
+state 81
+	expr : expr "MAYORIGUAL" . expr  (60)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 111
+
+
+state 82
+	expr : expr "MENORIGUAL" . expr  (61)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 112
+
+
+state 83
+	expr : expr "EQUALS" . expr  (53)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 113
+
+
+state 84
+	expr : expr "NOTEQUALS" . expr  (54)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 114
+
+
+state 85
+	expr : expr '<' . expr  (56)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 115
+
+
+state 86
+	expr : expr '>' . expr  (57)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 116
+
+
+state 87
+	expr : expr '.' . "IDENT"  (58)
+
+	"IDENT"  shift 117
+	.  error
+
+
+state 88
+	expr : expr '[' . expr ']'  (59)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 118
+
+
+state 89
+	metodo : "IDENT" '(' parametros ')' ':' tipo '{' cuerpoMetodo . '}'  (12)
+	cuerpoMetodo : cuerpoMetodo . cuerpo  (25)
+
+	"NOT"  shift 43
+	"IDENT"  shift 44
+	'}'  shift 119
+	"VAR"  shift 46
+	'('  shift 47
+	"WHILE"  shift 48
+	"IF"  shift 49
+	"RETURN"  shift 50
+	"PRINT"  shift 51
+	"READ"  shift 52
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 57
+	cuerpo  goto 58
+
+
+state 90
+	campo : "IDENT" ':' tipo ';' .  (10)
+
+	.  reduce 10
+
+
+state 91
+	expr : "IDENT" '(' . parametrosLlamada ')'  (62)
+	parametrosLlamada : .  (16)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	')'  reduce 16
+
+	parametrosLlamada  goto 120
+	parametroLlamadaP  goto 93
+	parametroLlamada  goto 94
+	expr  goto 95
+
+
+state 92
+	cuerpo : "IDENT" '(' parametrosLlamada . ')' ';'  (35)
+	expr : "IDENT" '(' parametrosLlamada . ')'  (62)
+
+	')'  shift 121
+	.  error
+
+
+state 93
+	parametrosLlamada : parametroLlamadaP .  (17)
+	parametroLlamadaP : parametroLlamadaP . ',' parametroLlamada  (21)
+
+	','  shift 122
+	')'  reduce 17
+
+
+state 94
+	parametroLlamadaP : parametroLlamada .  (20)
+
+	.  reduce 20
+
+
+state 95
+	parametroLlamada : expr .  (23)
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'+'  shift 75
+	'-'  shift 76
+	'*'  shift 77
+	'/'  shift 78
+	"AND"  shift 79
+	"OR"  shift 80
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	')'  reduce 23
+	','  reduce 23
+
+
+state 96
+	cuerpo : "VAR" "IDENT" ':' . tipo ';'  (26)
+
+	"IDENT"  shift 23
+	'['  shift 24
+	"INT"  shift 25
+	"CHAR"  shift 26
+	"FLOAT"  shift 27
+	.  error
+
+	tipo  goto 123
+
+
+state 97
+	expr : '(' expr ')' .  (50)
+
+	.  reduce 50
+
+
+state 98
+	cuerpo : "WHILE" '(' expr . ')' '{' cuerpoMetodo '}'  (27)
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'+'  shift 75
+	'-'  shift 76
+	'*'  shift 77
+	'/'  shift 78
+	"AND"  shift 79
+	"OR"  shift 80
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	')'  shift 124
+	.  error
+
+
+state 99
+	cuerpo : "IF" '(' expr . ')' '{' cuerpoMetodo '}'  (28)
+	cuerpo : "IF" '(' expr . ')' '{' cuerpoMetodo '}' "ELSE" '{' cuerpoMetodo '}'  (29)
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'+'  shift 75
+	'-'  shift 76
+	'*'  shift 77
+	'/'  shift 78
+	"AND"  shift 79
+	"OR"  shift 80
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	')'  shift 125
+	.  error
+
+
+state 100
+	cuerpo : "RETURN" expr ';' .  (31)
+
+	.  reduce 31
+
+
+state 101
+	cuerpo : "PRINT" expr ';' .  (33)
+
+	.  reduce 33
+
+
+state 102
+	cuerpo : "READ" expr ';' .  (34)
+
+	.  reduce 34
+
+
+state 103
+	expr : "CAST" '<' tipo . '>' expr  (44)
+
+	'>'  shift 126
+	.  error
+
+
+state 104
+	cuerpo : expr '=' expr . ';'  (32)
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'+'  shift 75
+	'-'  shift 76
+	'*'  shift 77
+	'/'  shift 78
+	"AND"  shift 79
+	"OR"  shift 80
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	';'  shift 127
+	.  error
+
+
+state 105
+	expr : expr . '+' expr  (46)
+	expr : expr '+' expr .  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'*'  shift 77
+	'/'  shift 78
+	"AND"  shift 79
+	"OR"  shift 80
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	'='  reduce 46
+	'+'  reduce 46
+	'-'  reduce 46
+	']'  reduce 46
+	';'  reduce 46
+	')'  reduce 46
+	','  reduce 46
+
+
+state 106
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr '-' expr .  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'*'  shift 77
+	'/'  shift 78
+	"AND"  shift 79
+	"OR"  shift 80
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	'='  reduce 47
+	'+'  reduce 47
+	'-'  reduce 47
+	']'  reduce 47
+	';'  reduce 47
+	')'  reduce 47
+	','  reduce 47
+
+
+state 107
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr '*' expr .  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	"AND"  shift 79
+	"OR"  shift 80
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	'='  reduce 48
+	'+'  reduce 48
+	'-'  reduce 48
+	'*'  reduce 48
+	'/'  reduce 48
+	']'  reduce 48
+	';'  reduce 48
+	')'  reduce 48
+	','  reduce 48
+
+
+state 108
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr '/' expr .  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	"AND"  shift 79
+	"OR"  shift 80
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	'='  reduce 49
+	'+'  reduce 49
+	'-'  reduce 49
+	'*'  reduce 49
+	'/'  reduce 49
+	']'  reduce 49
+	';'  reduce 49
+	')'  reduce 49
+	','  reduce 49
+
+
+state 109
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr "AND" expr .  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	'='  reduce 51
+	'+'  reduce 51
+	'-'  reduce 51
+	'*'  reduce 51
+	'/'  reduce 51
+	"AND"  reduce 51
+	"OR"  reduce 51
+	']'  reduce 51
+	';'  reduce 51
+	')'  reduce 51
+	','  reduce 51
+
+
+state 110
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr "OR" expr .  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	'='  reduce 52
+	'+'  reduce 52
+	'-'  reduce 52
+	'*'  reduce 52
+	'/'  reduce 52
+	"AND"  reduce 52
+	"OR"  reduce 52
+	']'  reduce 52
+	';'  reduce 52
+	')'  reduce 52
+	','  reduce 52
+
+
+state 111
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr "MAYORIGUAL" expr .  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'.'  shift 87
+	'['  shift 88
+	'='  reduce 60
+	'+'  reduce 60
+	'-'  reduce 60
+	'*'  reduce 60
+	'/'  reduce 60
+	"AND"  reduce 60
+	"OR"  reduce 60
+	"MAYORIGUAL"  reduce 60
+	"MENORIGUAL"  reduce 60
+	"EQUALS"  reduce 60
+	"NOTEQUALS"  reduce 60
+	'<'  reduce 60
+	'>'  reduce 60
+	']'  reduce 60
+	';'  reduce 60
+	')'  reduce 60
+	','  reduce 60
+
+
+state 112
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+	expr : expr "MENORIGUAL" expr .  (61)
+
+	'.'  shift 87
+	'['  shift 88
+	'='  reduce 61
+	'+'  reduce 61
+	'-'  reduce 61
+	'*'  reduce 61
+	'/'  reduce 61
+	"AND"  reduce 61
+	"OR"  reduce 61
+	"MAYORIGUAL"  reduce 61
+	"MENORIGUAL"  reduce 61
+	"EQUALS"  reduce 61
+	"NOTEQUALS"  reduce 61
+	'<'  reduce 61
+	'>'  reduce 61
+	']'  reduce 61
+	';'  reduce 61
+	')'  reduce 61
+	','  reduce 61
+
+
+state 113
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr "EQUALS" expr .  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'.'  shift 87
+	'['  shift 88
+	'='  reduce 53
+	'+'  reduce 53
+	'-'  reduce 53
+	'*'  reduce 53
+	'/'  reduce 53
+	"AND"  reduce 53
+	"OR"  reduce 53
+	"MAYORIGUAL"  reduce 53
+	"MENORIGUAL"  reduce 53
+	"EQUALS"  reduce 53
+	"NOTEQUALS"  reduce 53
+	'<'  reduce 53
+	'>'  reduce 53
+	']'  reduce 53
+	';'  reduce 53
+	')'  reduce 53
+	','  reduce 53
+
+
+state 114
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr "NOTEQUALS" expr .  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'.'  shift 87
+	'['  shift 88
+	'='  reduce 54
+	'+'  reduce 54
+	'-'  reduce 54
+	'*'  reduce 54
+	'/'  reduce 54
+	"AND"  reduce 54
+	"OR"  reduce 54
+	"MAYORIGUAL"  reduce 54
+	"MENORIGUAL"  reduce 54
+	"EQUALS"  reduce 54
+	"NOTEQUALS"  reduce 54
+	'<'  reduce 54
+	'>'  reduce 54
+	']'  reduce 54
+	';'  reduce 54
+	')'  reduce 54
+	','  reduce 54
+
+
+state 115
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr '<' expr .  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'.'  shift 87
+	'['  shift 88
+	'='  reduce 56
+	'+'  reduce 56
+	'-'  reduce 56
+	'*'  reduce 56
+	'/'  reduce 56
+	"AND"  reduce 56
+	"OR"  reduce 56
+	"MAYORIGUAL"  reduce 56
+	"MENORIGUAL"  reduce 56
+	"EQUALS"  reduce 56
+	"NOTEQUALS"  reduce 56
+	'<'  reduce 56
+	'>'  reduce 56
+	']'  reduce 56
+	';'  reduce 56
+	')'  reduce 56
+	','  reduce 56
+
+
+state 116
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr '>' expr .  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'.'  shift 87
+	'['  shift 88
+	'='  reduce 57
+	'+'  reduce 57
+	'-'  reduce 57
+	'*'  reduce 57
+	'/'  reduce 57
+	"AND"  reduce 57
+	"OR"  reduce 57
+	"MAYORIGUAL"  reduce 57
+	"MENORIGUAL"  reduce 57
+	"EQUALS"  reduce 57
+	"NOTEQUALS"  reduce 57
+	'<'  reduce 57
+	'>'  reduce 57
+	']'  reduce 57
+	';'  reduce 57
+	')'  reduce 57
+	','  reduce 57
+
+
+state 117
+	expr : expr '.' "IDENT" .  (58)
+
+	.  reduce 58
+
+
+state 118
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr '[' expr . ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'+'  shift 75
+	'-'  shift 76
+	'*'  shift 77
+	'/'  shift 78
+	"AND"  shift 79
+	"OR"  shift 80
+	"MAYORIGUAL"  shift 81
+	"MENORIGUAL"  shift 82
+	"EQUALS"  shift 83
+	"NOTEQUALS"  shift 84
+	'<'  shift 85
+	'>'  shift 86
+	'.'  shift 87
+	'['  shift 88
+	']'  shift 128
+	.  error
+
+
+state 119
+	metodo : "IDENT" '(' parametros ')' ':' tipo '{' cuerpoMetodo '}' .  (12)
+
+	.  reduce 12
+
+
+state 120
+	expr : "IDENT" '(' parametrosLlamada . ')'  (62)
+
+	')'  shift 129
+	.  error
+
+
+state 121
+	cuerpo : "IDENT" '(' parametrosLlamada ')' . ';'  (35)
+	expr : "IDENT" '(' parametrosLlamada ')' .  (62)
+
+	';'  shift 130
+	'='  reduce 62
+	'+'  reduce 62
+	'-'  reduce 62
+	'*'  reduce 62
+	'/'  reduce 62
+	"AND"  reduce 62
+	"OR"  reduce 62
+	"MAYORIGUAL"  reduce 62
+	"MENORIGUAL"  reduce 62
+	"EQUALS"  reduce 62
+	"NOTEQUALS"  reduce 62
+	'<'  reduce 62
+	'>'  reduce 62
+	'.'  reduce 62
+	'['  reduce 62
+
+
+state 122
+	parametroLlamadaP : parametroLlamadaP ',' . parametroLlamada  (21)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	parametroLlamada  goto 131
+	expr  goto 95
+
+
+state 123
+	cuerpo : "VAR" "IDENT" ':' tipo . ';'  (26)
+
+	';'  shift 132
+	.  error
+
+
+state 124
+	cuerpo : "WHILE" '(' expr ')' . '{' cuerpoMetodo '}'  (27)
+
+	'{'  shift 133
+	.  error
+
+
+state 125
+	cuerpo : "IF" '(' expr ')' . '{' cuerpoMetodo '}'  (28)
+	cuerpo : "IF" '(' expr ')' . '{' cuerpoMetodo '}' "ELSE" '{' cuerpoMetodo '}'  (29)
+
+	'{'  shift 134
+	.  error
+
+
+state 126
+	expr : "CAST" '<' tipo '>' . expr  (44)
+
+	"NOT"  shift 43
+	"IDENT"  shift 62
+	'('  shift 47
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 135
+
+
+state 127
+	cuerpo : expr '=' expr ';' .  (32)
+
+	.  reduce 32
+
+
+state 128
+	expr : expr '[' expr ']' .  (59)
+
+	.  reduce 59
+
+
+state 129
+	expr : "IDENT" '(' parametrosLlamada ')' .  (62)
+
+	.  reduce 62
+
+
+state 130
+	cuerpo : "IDENT" '(' parametrosLlamada ')' ';' .  (35)
+
+	.  reduce 35
+
+
+state 131
+	parametroLlamadaP : parametroLlamadaP ',' parametroLlamada .  (21)
+
+	.  reduce 21
+
+
+state 132
+	cuerpo : "VAR" "IDENT" ':' tipo ';' .  (26)
+
+	.  reduce 26
+
+
+state 133
+	cuerpo : "WHILE" '(' expr ')' '{' . cuerpoMetodo '}'  (27)
+	cuerpoMetodo : .  (24)
+
+	.  reduce 24
+
+	cuerpoMetodo  goto 136
+
+
+state 134
+	cuerpo : "IF" '(' expr ')' '{' . cuerpoMetodo '}'  (28)
+	cuerpo : "IF" '(' expr ')' '{' . cuerpoMetodo '}' "ELSE" '{' cuerpoMetodo '}'  (29)
+	cuerpoMetodo : .  (24)
+
+	.  reduce 24
+
+	cuerpoMetodo  goto 137
+
+
+state 135
+	expr : "CAST" '<' tipo '>' expr .  (44)
+	expr : expr . '+' expr  (46)
+	expr : expr . '-' expr  (47)
+	expr : expr . '*' expr  (48)
+	expr : expr . '/' expr  (49)
+	expr : expr . "AND" expr  (51)
+	expr : expr . "OR" expr  (52)
+	expr : expr . "EQUALS" expr  (53)
+	expr : expr . "NOTEQUALS" expr  (54)
+	expr : expr . '<' expr  (56)
+	expr : expr . '>' expr  (57)
+	expr : expr . '.' "IDENT"  (58)
+	expr : expr . '[' expr ']'  (59)
+	expr : expr . "MAYORIGUAL" expr  (60)
+	expr : expr . "MENORIGUAL" expr  (61)
+
+	'.'  shift 87
+	'['  shift 88
+	'='  reduce 44
+	'+'  reduce 44
+	'-'  reduce 44
+	'*'  reduce 44
+	'/'  reduce 44
+	"AND"  reduce 44
+	"OR"  reduce 44
+	"MAYORIGUAL"  reduce 44
+	"MENORIGUAL"  reduce 44
+	"EQUALS"  reduce 44
+	"NOTEQUALS"  reduce 44
+	'<'  reduce 44
+	'>'  reduce 44
+	']'  reduce 44
+	';'  reduce 44
+	')'  reduce 44
+	','  reduce 44
+
+
+state 136
+	cuerpoMetodo : cuerpoMetodo . cuerpo  (25)
+	cuerpo : "WHILE" '(' expr ')' '{' cuerpoMetodo . '}'  (27)
+
+	"NOT"  shift 43
+	"IDENT"  shift 44
+	'}'  shift 138
+	"VAR"  shift 46
+	'('  shift 47
+	"WHILE"  shift 48
+	"IF"  shift 49
+	"RETURN"  shift 50
+	"PRINT"  shift 51
+	"READ"  shift 52
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 57
+	cuerpo  goto 58
+
+
+state 137
+	cuerpoMetodo : cuerpoMetodo . cuerpo  (25)
+	cuerpo : "IF" '(' expr ')' '{' cuerpoMetodo . '}'  (28)
+	cuerpo : "IF" '(' expr ')' '{' cuerpoMetodo . '}' "ELSE" '{' cuerpoMetodo '}'  (29)
+
+	"NOT"  shift 43
+	"IDENT"  shift 44
+	'}'  shift 139
+	"VAR"  shift 46
+	'('  shift 47
+	"WHILE"  shift 48
+	"IF"  shift 49
+	"RETURN"  shift 50
+	"PRINT"  shift 51
+	"READ"  shift 52
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 57
+	cuerpo  goto 58
+
+
+state 138
+	cuerpo : "WHILE" '(' expr ')' '{' cuerpoMetodo '}' .  (27)
+
+	.  reduce 27
+
+
+state 139
+	cuerpo : "IF" '(' expr ')' '{' cuerpoMetodo '}' .  (28)
+	cuerpo : "IF" '(' expr ')' '{' cuerpoMetodo '}' . "ELSE" '{' cuerpoMetodo '}'  (29)
+
+	"ELSE"  shift 140
+	"NOT"  reduce 28
+	"IDENT"  reduce 28
+	'}'  reduce 28
+	"VAR"  reduce 28
+	'('  reduce 28
+	"WHILE"  reduce 28
+	"IF"  reduce 28
+	"RETURN"  reduce 28
+	"PRINT"  reduce 28
+	"READ"  reduce 28
+	"LITENT"  reduce 28
+	"LITREAL"  reduce 28
+	"CAST"  reduce 28
+	"CHARACTER"  reduce 28
+
+
+state 140
+	cuerpo : "IF" '(' expr ')' '{' cuerpoMetodo '}' "ELSE" . '{' cuerpoMetodo '}'  (29)
+
+	'{'  shift 141
+	.  error
+
+
+state 141
+	cuerpo : "IF" '(' expr ')' '{' cuerpoMetodo '}' "ELSE" '{' . cuerpoMetodo '}'  (29)
+	cuerpoMetodo : .  (24)
+
+	.  reduce 24
+
+	cuerpoMetodo  goto 142
+
+
+state 142
+	cuerpoMetodo : cuerpoMetodo . cuerpo  (25)
+	cuerpo : "IF" '(' expr ')' '{' cuerpoMetodo '}' "ELSE" '{' cuerpoMetodo . '}'  (29)
+
+	"NOT"  shift 43
+	"IDENT"  shift 44
+	'}'  shift 143
+	"VAR"  shift 46
+	'('  shift 47
+	"WHILE"  shift 48
+	"IF"  shift 49
+	"RETURN"  shift 50
+	"PRINT"  shift 51
+	"READ"  shift 52
+	"LITENT"  shift 53
+	"LITREAL"  shift 54
+	"CAST"  shift 55
+	"CHARACTER"  shift 56
+	.  error
+
+	expr  goto 57
+	cuerpo  goto 58
+
+
+state 143
+	cuerpo : "IF" '(' expr ')' '{' cuerpoMetodo '}' "ELSE" '{' cuerpoMetodo '}' .  (29)
+
+	.  reduce 29
+
+
+42 terminals, 19 nonterminals
+63 grammar rules, 144 states

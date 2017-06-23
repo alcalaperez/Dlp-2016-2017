@@ -1,0 +1,201 @@
+#source "Test Generación de Código 4.txt"
+CALL main
+HALT
+potencia:
+enter 4
+#VAR total0:real
+
+#line 29
+push BP
+push 4
+add
+loadi
+push 0
+eqi
+jz else10
+#line 21
+push BP
+push -4
+add
+pushf 1.0
+storef
+jmp finIfElse0
+else10:
+
+#line 29
+push BP
+push 4
+add
+loadi
+push 0
+lti
+jz else11
+#line 24
+push BP
+push -4
+add
+pushf 1.0
+push BP
+push 6
+add
+loadf
+push 0
+push BP
+push 4
+add
+loadi
+subi
+call potencia
+divf
+storef
+jmp finIfElse1
+else11:
+#line 26
+push BP
+push -4
+add
+push BP
+push 6
+add
+loadf
+storef
+#line 29
+loop0:
+push BP
+push 4
+add
+loadi
+push 1
+gti
+jz finWhile0
+#line 28
+push BP
+push -4
+add
+push BP
+push -4
+add
+loadf
+push BP
+push 6
+add
+loadf
+mulf
+storef
+#line 29
+push BP
+push 4
+add
+push BP
+push 4
+add
+loadi
+push 1
+subi
+storei
+jmp loop0:
+finWhile0:
+
+
+finIfElse1:
+
+
+finIfElse0:
+
+
+push BP
+push -4
+add
+loadf
+ret 4, 4, 6
+
+
+letraHipoteca:
+enter 4
+#VAR mensual1:real
+#line 39
+push BP
+push -4
+add
+push BP
+push 4
+add
+loadf
+pushf 12.0
+divf
+storef
+push BP
+push 10
+add
+loadf
+push BP
+push -4
+add
+loadf
+mulf
+pushf 100.0
+pushf 1.0
+pushf 1.0
+push BP
+push -4
+add
+loadf
+pushf 100.0
+divf
+addf
+push 0
+push BP
+push 8
+add
+loadi
+push 12
+muli
+subi
+call potencia
+subf
+mulf
+divf
+ret 4, 4, 10
+
+
+main:
+enter 10
+#VAR precioVivienda2:real
+#VAR añosHipoteca3:int
+#VAR interes4:real
+#line 48
+push BP
+push -4
+add
+pushf 200000.0
+storef
+#line 49
+push BP
+push -6
+add
+push 30
+storei
+#line 50
+push BP
+push -10
+add
+pushf 2.04
+storef
+#line 57
+push BP
+push -4
+add
+loadf
+push BP
+push -6
+add
+loadi
+push BP
+push -10
+add
+loadf
+call letraHipoteca
+outf
+ret 0, 10, 0
+
+
