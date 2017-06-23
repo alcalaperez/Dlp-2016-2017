@@ -533,9 +533,9 @@ public class SeleccionDeInstrucciones extends DefaultVisitor {
 	// class LiteralChar { Expresion valor; }
 	public Object visit(LiteralChar node, Object param) {
 		assert (param == Funcion.VALOR);
-		char caracter = node.getValor().replaceAll("\'", "").charAt(0);
+		int caracter = stringToChar(node.getValor());
 
-		genera("pushb " + Character.getNumericValue(caracter));
+		genera("pushb " +  (int) caracter);
 		node.setTipo(new CharType());
 
 		return null;
@@ -568,6 +568,17 @@ public class SeleccionDeInstrucciones extends DefaultVisitor {
 		Param p = params.getFromAny(nombre);
 
 		return p;
+	}
+
+	private char stringToChar(String s) {
+		if(s.equals("'\\n'")) {
+			return '\n';
+		}  else if(s.equals("'\\t'")) {
+			return '\t';
+		} else if(s.equals("'\\r'")) {
+			return '\r';
+		}
+		return s.replaceAll("\'", "").charAt(0);
 	}
 
 	private int obtenerTamañoVariablesLocalesPorMetodo(DefMetodo node) {
